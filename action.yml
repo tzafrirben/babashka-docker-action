@@ -1,0 +1,22 @@
+# https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions
+name: GitHub Actions Docker Babashka
+description: This is example of running babshka script using Docker container
+
+author: Tzafrir Ben-Ami
+
+inputs:
+  bb:
+    description: 'babashka script input'
+    required: true
+    default: 'script input default'
+
+outputs:
+  time:
+    description: 'The time of the bb script'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.bb }}
+
