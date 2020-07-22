@@ -1,8 +1,8 @@
-# Import babshka base Docker image
+# babshka container image
 FROM borkdude/babashka
 
-# Copies babashka script from action repository to the filesystem path `/` of the container
-COPY bb.clj /bb.sh
+# Copies code file to the filesystem path `/` of the container
+COPY entrypoint.sh /entrypoint.sh
 
-# Code file to execute when the docker container starts up (`bb.sh`)
-ENTRYPOINT ["/bb.sh"]
+# Code file to execute when the docker container starts up (`entrypoint.sh`)
+ENTRYPOINT ["/entrypoint.sh"]
