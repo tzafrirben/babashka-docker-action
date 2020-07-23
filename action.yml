@@ -1,5 +1,5 @@
 name: Babashka GitHub Actions Docker
-description: Execute babshka script or shell commands integrated babashka using Docker container
+description: Execute babshka script or shell command(s) inside a Docker container
 
 author: Tzafrir Ben-Ami
 
@@ -8,27 +8,31 @@ branding:
   icon: 'command'
 
 inputs:
-  script:
-    description: 'path to the babashka script (file) to execute'
+  bb_src:
+    description: 'path to the babashka script to execute'
     required: false
     default: ''
-  shell:
+  bb_cmd:
     description: 'shell command(s) piped with babashka command(s) to execute'
     required: false
     default: ''
-  args:
-    description: 'arguments to pass to the executable babashka script (ignored when using with `shell` command)'
+  bb_args:
+    description: 'babashka script arguments (ignored when using with `bb_cmd` command)'
     required: false
     default: ''
+
 outputs:
-  output:
-    description: 'The output of the babashka script\shell command(s)'
+  bb_out:
+    description: 'bb script\command output'
 
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.script }}
-    - ${{ inputs.args }}
-    - ${{ inputs.shell }}
+    - '--bb_src'
+    - ${{ inputs.bb_src }}
+    - '--bb_cmd'
+    - ${{ inputs.bb_cmd }}
+    - '--bb_args'
+    - ${{ inputs.bb_args }}
 
