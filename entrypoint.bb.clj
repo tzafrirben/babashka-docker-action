@@ -15,7 +15,8 @@
    :general-err  6})
 
 (def args-usage
-  (str "usage: <bb_src>  path to babasha script to execute\n"
+  (str "\n"
+       "usage: <bb_src>  path to babasha script to execute\n"
        "       <bb_args> (optional) babashka script arguments\n"
        "usage: <bb_cmd>  shell command(s) piped with babashka command(s) to execute"))
 
@@ -31,7 +32,7 @@
     :default false]])
 
 (defn args-error [errors]
-  (str "The following errors occurred while parsing your command:\n"
+  (str "\nthe following errors occurred while parsing your command:\n"
        (string/join \newline errors)))
 
 ;;; https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action#writing-the-action-code
@@ -51,7 +52,7 @@
       errors          {:message (args-error errors) :exit-code :args-error}
       (and (not (string/blank? (:bb_src options)))
            (not (string/blank? (:bb_cmd options))))
-      {:message args-usage :exit-code :args-error}
+                      {:message args-usage :exit-code :args-error}
       :else           {:opts options})))
 
 (defn system-exit!
@@ -66,7 +67,11 @@
   (let [{:keys [exit err out]} (shell/sh "bb" "-f" src args)]
     (if (zero? exit)
       (system-exit! out :success)
-      (system-exit! err exit))))
+      (let [msg (if (string/blank? err)
+                  (format "failed to execute script [%s]: exit code [%d]" src exit)
+                  err)]
+        (println msg)
+        (system-exit! msg exit)))))
 
 (defn exec-command!
   "execute babashka shell command(s)"
@@ -74,7 +79,11 @@
   (let [{:keys [exit err out]} (shell/sh "sh" "-c" cmd)]
     (if (zero? exit)
       (system-exit! out :success)
-      (system-exit! err exit))))
+      (let [msg (if (string/blank? err)
+                  (format "failed to execute command [%s]: exit code [%d]" cmd exit)
+                  err)]
+        (println msg)
+        (system-exit! msg exit)))))
 
 (let [args (parse-args *command-line-args*)]
   (if (:exit-code args)
