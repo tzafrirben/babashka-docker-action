@@ -19,15 +19,15 @@ To use the action create an babashka.yml (or choose custom *.yml name) in the .g
 
 To execute a babashka script
 ```yaml
-- name: Execute babashak script
+- name: Execute babashka script
   uses: tzafrirben/babashka-docker-action@v0.3
   with:
     bb_src: <path-to-babashka-script>
-    bb_args: <bb-srcipt-arguments> (optional)
+    bb_args: <bb-script-arguments> (optional)
 ```
 To execute babashka shell commands (`bb`)
 ```yaml
-- name: Excecute babashka shell command(s)
+- name: Execute babashka shell command(s)
   uses: tzafrirben/babashka-docker-action@v0.3
   with:
     bb_cmd: <command(s)>
@@ -48,7 +48,7 @@ jobs:
       # you must check out the repository first
       - name: Checkout
         uses: actions/checkout@v2
-      # Now we can execute a babashak script from our
+      # Now we can execute a babashka script from our
       # repository
       - name: babashka script
         uses: tzafrirben/babashka-docker-action@v0.3

@@ -1,6 +1,6 @@
 #!/usr/bin/env bb
-;;; clojure babashka script to handle GitHub Docker action: parse action params
-;;; and excecute babashka commands 
+;;; GitHub Docker action entrypoint: parse the action params and excecute the
+;;; babashka script or commands.
 ;;; https://github.com/borkdude/babashka
 (ns entrypoint
   (:require
@@ -11,8 +11,8 @@
 
 (def exit-codes
   {:success      0
-   :args-error   5
-   :general-err  6})
+   :args-error   4
+   :general-err  8})
 
 (def args-usage
   (str "\n"
@@ -85,6 +85,7 @@
         (println msg)
         (system-exit! msg exit)))))
 
+;; script entry point
 (let [args (parse-args *command-line-args*)]
   (if (:exit-code args)
     (system-exit! (:message args) (:exit-code args))
