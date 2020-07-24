@@ -1,5 +1,5 @@
-name: Babashka GitHub Actions Docker
-description: Execute babshka script or shell command(s) inside a Docker container
+name: Babashka (Clojure)
+description: Run babshka script or babashka shell command(s) on GitHub Actions
 
 author: Tzafrir Ben-Ami
 
