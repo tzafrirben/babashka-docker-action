@@ -11,24 +11,14 @@ You can choose to either:
   
 #### execute script from your repo:
 
-| Name        | Required      | Description                                |
-| ------------| ------------- | ------------------------------------------ |
-| `bb_src`    | yes           | path to babashka script to execute         |
-| `bb_args`   | no (optional) | arguments to pass to the babashka script   | 
-  
-#### download and execute remote script:
+| Name        | Required      | Description                                         |
+| ------------| ------------- | --------------------------------------------------- |
+| `bb_src`    | no (optional) | path to babashka script to execute                  |
+| `bb_url`    | no (optional) | URL for the babashka script to download and execute |
+| `bb_args`   | no (optional) | arguments to pass to the babashka script            | 
+| `bb_cmd`    | no (optional) | the shell commands to execute piped                 |
 
-| Name        | Required      | Description                                |
-| ------------| ------------- | ------------------------------------------ |
-| `bb_url`    | yes           | URL for the babashka script to download and execute         |
-| `bb_args`   | no (optional) | arguments to pass to the babashka script   |
-  
-  
-#### execute babashka shell commands:
-
-| Name        | Required      | Description                                |
-| ------------| ------------- | ------------------------------------------ |
-| `bb_cmd`    | yes           | the shell commands to execute piped        |
+__Note__ that only one of `bb_src`, `bb_url` or `bb_cmd` inputs must be set.
 
 ## Action outputs
 The script\shell actions sets output into `bb_out` var.
