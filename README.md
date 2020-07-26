@@ -18,7 +18,7 @@ You can choose to either:
 | `bb_args`   | no (optional) | arguments to pass to the babashka script            | 
 | `bb_cmd`    | no (optional) | the shell commands to execute piped                 |
 
-__Note__ that only one of `bb_src`, `bb_url` or `bb_cmd` inputs must be set.
+*Note that you must set __only one__ of `bb_src`, `bb_url` or `bb_cmd` inputs arguments.*
 
 ## Action outputs
 The script\shell actions sets output into `bb_out` var.
@@ -29,15 +29,26 @@ To use the action create an babashka.yml (or choose custom *.yml name) in the .g
 To execute a babashka script
 ```yaml
 - name: Execute babashka script
-  uses: tzafrirben/babashka-docker-action@v0.3
+  uses: tzafrirben/babashka-docker-action@v1
   with:
     bb_src: <path-to-babashka-script>
     bb_args: <bb-script-arguments> (optional)
 ```
+
+To execute a remote babashka script
+```yaml
+- name: Execute babashka script
+  uses: tzafrirben/babashka-docker-action@v1
+  with:
+    bb_src: 'http://example.com/<path-to-bb-script-to-dowload>'
+    bb_args: <bb-script-arguments> (optional)
+```
+
+
 To execute babashka shell commands (`bb`)
 ```yaml
 - name: Execute babashka shell command(s)
-  uses: tzafrirben/babashka-docker-action@v0.3
+  uses: tzafrirben/babashka-docker-action@v1
   with:
     bb_cmd: <command(s)>
 ```
@@ -65,6 +76,28 @@ jobs:
         with:
           bb_src: '<path-to-script-in-repo>'
           bb_args: '1 2 3 ...'
+      # Print the output of the babashka script from the
+      # `bb_script` step 
+      - name: Get the script output
+        run: echo "${{ steps.bb_script.outputs.bb_out }}"
+```
+### babashka remote script example
+Download and execute a babashka script hosted on different repository or website. In this example we are downloading a script from the examples directory in [babashka git repository](https://github.com/borkdude/babashka/tree/master/examples)
+
+```yaml
+on: [push]
+jobs:
+  babashka_job:
+    runs-on: ubuntu-latest
+    name: Execute babashka script
+    steps:
+      # Download and execute babashka script from a different repository
+      # repository
+      - name: babashka script
+        uses: tzafrirben/babashka-docker-action@v0.3
+        id: bb_script
+        with:
+          bb_url: 'https://raw.githubusercontent.com/borkdude/babashka/master/examples/pst.clj'
       # Print the output of the babashka script from the
       # `bb_script` step 
       - name: Get the script output
