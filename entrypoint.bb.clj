@@ -18,12 +18,16 @@
   (str "\n"
        "usage: <bb_src>  path to babasha script to execute\n"
        "       <bb_args> (optional) babashka script arguments\n"
+       "usage: <bb_url>  URL of the remote babasha script to download and execute\n"
+       "       <bb_args> (optional) babashka script arguments\n"
        "usage: <bb_cmd>  shell command(s) piped with babashka command(s) to execute"))
 
 (def cli-options
   [["" "--bb_src <path-to-babashka-script>" ""
     :default ""
     :validate [#(if (seq %) (.exists (io/file %)) true) "babashka script not found"]]
+   ["" "--bb_url \"URL of the remote babashka script to download and execute\"" ""
+    :default ""]
    ["" "--bb_cmd <shell command(s) piped with babashak command(s)>" ""
     :default ""]
    ["" "--bb_args \"babashka script arguments\"" ""
@@ -50,9 +54,13 @@
     (cond
       (:help options) {:message args-usage :exit-code :success}
       errors          {:message (args-error errors) :exit-code :args-error}
-      (and (not (string/blank? (:bb_src options)))
-           (not (string/blank? (:bb_cmd options))))
-                      {:message args-usage :exit-code :args-error}
+      (or (and (not (string/blank? (:bb_src options)))
+               (not (string/blank? (:bb_cmd options))))
+          (and (not (string/blank? (:bb_src options)))
+               (not (string/blank? (:bb_url options))))
+          (and (not (string/blank? (:bb_url options)))
+               (not (string/blank? (:bb_cmd options)))))
+      {:message args-usage :exit-code :args-error}
       :else           {:opts options})))
 
 (defn system-exit!
@@ -60,6 +68,35 @@
   (let [code (get exit-codes exit-code exit-code)]
     (println (exit-message message))
     (System/exit code)))
+
+(defn download-script
+  [script-url]
+  (let [tmp-file (str (.toString (java.util.UUID/randomUUID)) ".clj")
+        response (shell/sh "curl" "-s"
+                           "-o" tmp-file
+                           "-w" "\"%{http_code}\""
+                           script-url)]
+    (assoc response :script tmp-file)))
+
+(defn exec-remote-script!
+  "download nad exceute remote babashka script with specified arguments"
+  [url args]
+  (let [{:keys [exit out script]} (download-script url)
+        status (Integer/parseInt (string/replace out #"\"" ""))]
+    (if (and (zero? exit) (= status 200))
+      (let [{:keys [exit err out]} (shell/sh "bb" "-f" script args)]
+        (shell/sh "rm" script)
+        (if (zero? exit)
+          (system-exit! out :success)
+          (let [msg (if (string/blank? err)
+                      (format "failed to execute remote script [%s]: exit code [%d]" url exit)
+                      err)]
+            (println msg)
+            (system-exit! msg exit))))
+      (let [msg (format "failed to download script [%s]: http status [%s] exit code [%d]" url out status)]
+        (shell/sh "rm" script)
+        (println msg)
+        (system-exit! msg status)))))
 
 (defn exec-script!
   "exceute babashka script with specified arguments"
@@ -90,6 +127,8 @@
   (if (:exit-code args)
     (system-exit! (:message args) (:exit-code args))
     (let [opts (:opts args)]
-      (if (seq (:bb_src opts))
-        (exec-script! (:bb_src opts) (:bb_args opts))
-        (exec-command! (:bb_cmd opts))))))
+      (cond
+        (seq (:bb_src opts)) (exec-script! (:bb_src opts) (:bb_args opts))
+        (seq (:bb_url opts)) (exec-remote-script! (:bb_url opts) (:bb_args opts))
+        (seq (:bb_cmd opts)) (exec-command! (:bb_cmd opts))
+        :else                (system-exit! "wrong input params" :general-err)))))

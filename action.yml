@@ -12,6 +12,10 @@ inputs:
     description: 'path to the babashka script to execute'
     required: false
     default: ''
+  bb_url:
+    description: 'URL of the babashka script to download and execute'
+    required: false
+    default: ''
   bb_cmd:
     description: 'shell command(s) piped with babashka command(s) to execute'
     required: false
@@ -31,6 +35,8 @@ runs:
   args:
     - '--bb_src'
     - ${{ inputs.bb_src }}
+    - '--bb_url'
+    - ${{ inputs.bb_url }}
     - '--bb_cmd'
     - ${{ inputs.bb_cmd }}
     - '--bb_args'

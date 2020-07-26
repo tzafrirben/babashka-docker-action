@@ -1,15 +1,34 @@
 ## babashka
-
+---
 Run [babashka](https://github.com/borkdude/babashka) script\shell commands.
 
 ## Action inputs
-You can choose to either execute a babashka script or babashka shell command(s) (`bb`)
+---
+You can choose to either:
+- execute a babashka script in your local repository
+- download and execute remote babashka script (hosted in a different repository\site)
+- execute babashka shell command(s) (`bb`)
+  
+#### execute script from your repo:
 
-`bb_src` path to babashka script to execute  
-`bb_args` arguments to pass to the babashka script  
+| Name        | Required      | Description                                |
+| ------------| ------------- | ------------------------------------------ |
+| `bb_src`    | yes           | path to babashka script to execute         |
+| `bb_args`   | no (optional) | arguments to pass to the babashka script   | 
+  
+#### download and execute remote script:
 
-Or if you choose to execute babashka shell commands  
-`bb_cmd` the commands to execute
+| Name        | Required      | Description                                |
+| ------------| ------------- | ------------------------------------------ |
+| `bb_url`    | yes           | URL for the babashka script to download and execute         |
+| `bb_args`   | no (optional) | arguments to pass to the babashka script   |
+  
+  
+#### execute babashka shell commands:
+
+| Name        | Required      | Description                                |
+| ------------| ------------- | ------------------------------------------ |
+| `bb_cmd`    | yes           | the shell commands to execute piped        |
 
 ## Action outputs
 The script\shell actions sets output into `bb_out` var.
