@@ -1,5 +1,5 @@
 # Base container image
-FROM borkdude/babashka
+FROM babashka/babashka
 
 # Copy entry point script from action repository to the filesystem path `/` of the container
 COPY entrypoint.bb.clj /entrypoint.bb.clj
