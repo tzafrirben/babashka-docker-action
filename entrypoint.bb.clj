@@ -119,6 +119,7 @@
       (let [msg (if (string/blank? err)
                   (format "failed to execute command [%s]: exit code [%d]" cmd exit)
                   err)]
+        (println out)
         (println msg)
         (system-exit! msg exit)))))
 
